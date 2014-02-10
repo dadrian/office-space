@@ -16,3 +16,15 @@
 *.exe
 *.out
 *.app
+
+# Gyp
+config.gypi
+config.mk
+*.mk
+*.make
+Makefile
+gyp-mac-tool
+
+# Python
+*.pyc
+
