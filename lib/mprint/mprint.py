@@ -3,6 +3,7 @@ import datetime
 import cosign
 import itertools
 import urllib
+import json
 
 class Client(object):
 
@@ -54,6 +55,11 @@ class Client(object):
         res = opener.open(req)
         data = res.read()
         return (res, data)
+
+    def json_call(self, method, path, params=None, auth=True):
+        (res, data) = self.api_call(method, path, params, auth)
+        ret = json.loads(data)
+        return (res, ret)
 
 
 if __name__ == '__main__':

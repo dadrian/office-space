@@ -1,6 +1,5 @@
 import mprint
 import json
-import cosign
 
 class Area(mprint.Client):
 
@@ -21,12 +20,12 @@ class Area(mprint.Client):
         method = 'GET'
         path = ''.join(['/areas/', str(area_id)])
         params = {}
-        (res, data) = self.api_call(method, path)
-        area = json.loads(data)
+        (res, area) = self.json_call(method, path)
         return area
 
 if __name__ == '__main__':
     import sys
+    import cosign
     username = sys.argv[1]
     password = sys.argv[2]
     creds = cosign.Credentials(username, password)
