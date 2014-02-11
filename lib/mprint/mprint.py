@@ -1,6 +1,8 @@
 import urllib2
 import datetime
 import cosign
+import itertools
+import urllib
 
 class Client(object):
 
@@ -10,8 +12,22 @@ class Client(object):
         self.creds = credentials
         self._debug = kwargs.get("debug", False)
 
-    def _build_uri(self, path):
-        return ''.join(['https://', Client.HOST, '/api', path])
+    def _build_uri(self, path, urlparams=None):
+        base = ['https://', Client.HOST, '/api', path]
+        if self._debug:
+            if not urlparams:
+                urlparams = dict()
+            urlparams.update({
+                    'debug': ''
+                })
+        if urlparams:
+            uri_parts = itertools.chain(
+                    base,
+                    ['?', urllib.urlencode(urlparams)],
+                )
+            return ''.join(uri_parts)
+        else:
+            return ''.join(base)
 
     def api_call(self, method, path, params, auth=True):
         """
@@ -21,16 +37,18 @@ class Client(object):
         * path: Path of the endpoint e.g. /areas
         * params: Dictionary of 
         """
-        host = Client.HOST
-        port = 80
-        uri = self._build_uri(path)
-        d = datetime.datetime.now()
-        now = d.strftime("%a, %d %b %Y %H:%M:%S %z")
-        print uri
+        method = method.upper()
 
-        body = ''
+        if method in [ 'POST', 'PUT' ]:
+            body = urllib.urlencode(params)
+            uri = self._build_uri(path)
+        else:
+            body = None
+            uri = self._build_uri(path, params)
+
         req = urllib2.Request(
-            uri
+            uri,
+            body
             )
         opener = urllib2.build_opener(cosign.CosignHandler(self.creds))
         res = opener.open(req)
