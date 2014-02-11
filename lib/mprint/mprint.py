@@ -29,7 +29,7 @@ class Client(object):
         else:
             return ''.join(base)
 
-    def api_call(self, method, path, params, auth=True):
+    def api_call(self, method, path, params=None, auth=True):
         """
         Call an MPrint API method
 

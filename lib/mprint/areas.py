@@ -1,13 +1,38 @@
 import mprint
+import json
+import cosign
 
 class Area(mprint.Client):
 
-    def __init__(self, *args, **kwargs):
-        super(Area, self).__init__(*args, **kwargs)
+    AREAS = [ 'Arbor Lakes', 'Central Campus', 'Hill, Medical Center', 'North Campus', 'South Campus']
 
-    def get_areas(self):
+    def __init__(self, credentials, *args, **kwargs):
+        super(Area, self).__init__(credentials, *args, **kwargs)
+
+    def areas(self):
         method = 'GET'
         path = '/areas'
         params = {}
-        (res, data) = self.api_call(method, path, params)
-        return data
+        (res, data) = self.api_call(method, path)
+        areas = json.loads(data)
+        return areas
+
+    def area(self, area_id):
+        method = 'GET'
+        path = ''.join(['/areas/', str(area_id)])
+        params = {}
+        (res, data) = self.api_call(method, path)
+        area = json.loads(data)
+        return area
+
+if __name__ == '__main__':
+    import sys
+    username = sys.argv[1]
+    password = sys.argv[2]
+    creds = cosign.Credentials(username, password)
+
+    area_client = Area(creds)
+    print area_client.areas()
+    print area_client.area(1)
+
+
